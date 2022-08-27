@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { parse } from 'csv-parse';
 import jsonfile from 'jsonfile';
+import convert from 'xml-js';
 
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -18,3 +19,11 @@ jsonfile.readFile(file, function (err, obj) {
   if (err) console.error(err)
   console.log("JSON", obj)
 })
+
+//parse xml
+const xml = fs.readFileSync(__dirname+'/movie.xml', 'utf8');
+const options = {compact: false};
+const result = convert.xml2js(xml, options);
+console.log("XML");
+console.dir(result, { depth: null });
+

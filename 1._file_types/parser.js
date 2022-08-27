@@ -2,6 +2,7 @@ import fs from 'fs';
 import { parse } from 'csv-parse';
 import jsonfile from 'jsonfile';
 import convert from 'xml-js';
+import { loadYamlFile } from 'load-yaml-file'
 
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -27,3 +28,6 @@ const result = convert.xml2js(xml, options);
 console.log("XML");
 console.dir(result, { depth: null });
 
+//parse yaml
+const data = await loadYamlFile(__dirname+'/movie.yml');
+console.log("YAML", data);

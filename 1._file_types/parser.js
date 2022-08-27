@@ -31,3 +31,12 @@ console.dir(result, { depth: null });
 //parse yaml
 const data = await loadYamlFile(__dirname+'/movie.yml');
 console.log("YAML", data);
+
+//parse txt
+const txt = fs.readFileSync(__dirname+'/movie', 'utf8').split("\r\n");
+const text = {};
+for (let i = 0; i < txt.length; i+=2) {
+    if (txt[i+1].match(/\//)) txt[i+1] = txt[i+1].split('/');
+    text[txt[i]] = txt[i+1]; 
+}
+console.log(text);

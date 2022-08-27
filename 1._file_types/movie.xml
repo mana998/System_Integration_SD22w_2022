@@ -1,0 +1,10 @@
+<movie>
+    <name>Everything Everywhere All at Once</name>
+    <year>2022</year>
+    <inCinemas>true</inCinemas>
+    <genres>
+        <genre>action</genre>
+        <genre>adventure</genre>
+        <genre>comedy</genre>
+    </genres>
+</movie>

@@ -8,35 +8,58 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-//parse csv
-const parser = parse({delimiter: ','}, function(err, data){
-  console.log("CSV\n",data);
-});
-fs.createReadStream(__dirname+'/movie.csv').pipe(parser);
+function parseCSV() { 
+    const csv = [];
+    return new Promise((resolve, reject) => {
+        fs.createReadStream(__dirname+'/movie.csv')
+        .on("error", error => {
+            reject(error);
+        })    
+        .pipe(parse({delimiter: ','}))
+            .on("data", function (row) {
+                csv.push(row);
+            })
+            .on("end", function() {
+                resolve(csv);
+            })
+    })
+}
 
 //parse json
-const file = `${__dirname}/movie.json`;
-jsonfile.readFile(file, function (err, obj) {
-  if (err) console.error(err)
-  console.log("JSON", obj)
-})
+function parseJSON() {
+    const file = `${__dirname}/movie.json`;
+    return new Promise((resolve, reject) => {
+        jsonfile.readFile(file, function (err, obj) {
+            if (err) reject(error);
+            resolve(obj);
+        })
+    })
+}
 
 //parse xml
-const xml = fs.readFileSync(__dirname+'/movie.xml', 'utf8');
-const options = {compact: false};
-const result = convert.xml2js(xml, options);
-console.log("XML");
-console.dir(result, { depth: null });
+function parseXML() {
+    const xml = fs.readFileSync(__dirname+'/movie.xml', 'utf8');
+    const options = {compact: false};
+    const result = convert.xml2js(xml, options);
+    return result;
+    //console.dir(result, { depth: null });
+}
 
 //parse yaml
-const data = await loadYamlFile(__dirname+'/movie.yml');
-console.log("YAML", data);
+async function parseYAML() {
+    const data = await loadYamlFile(__dirname+'/movie.yml');
+    return (data);
+}
 
 //parse txt
-const txt = fs.readFileSync(__dirname+'/movie', 'utf8').split("\r\n");
-const text = {};
-for (let i = 0; i < txt.length; i+=2) {
-    if (txt[i+1].match(/\//)) txt[i+1] = txt[i+1].split('/');
-    text[txt[i]] = txt[i+1]; 
+function parseTXT() {
+    const txt = fs.readFileSync(__dirname+'/movie', 'utf8').split("\r\n");
+    const text = {};
+    for (let i = 0; i < txt.length; i+=2) {
+        if (txt[i+1].match(/\//)) txt[i+1] = txt[i+1].split('/');
+        text[txt[i]] = txt[i+1]; 
+    }
+    return text;
 }
-console.log(text);
+
+export {parseCSV, parseJSON, parseTXT, parseXML, parseYAML}

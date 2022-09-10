@@ -1,21 +1,26 @@
 from libs import Parser
 from fastapi import FastAPI
 import json
+from pydantic import BaseModel
+
+
+class File(BaseModel):
+    filename: str
 
 app = FastAPI()
 
-@app.get("/parseCSV")
-def _():
-    return (json.loads(Parser.parseCSV()))
+@app.post("/parseCSV")
+def _(file: File):
+    return (json.loads(Parser.parseCSV(file.filename)))
 
-@app.get("/parseJSON")
-def _():
-    return (Parser.parseJSON())
+@app.post("/parseJSON")
+def _(file: File):
+    return (Parser.parseJSON(file.filename))
 
-@app.get("/parseXML")
-def _():
-    return (Parser.parseXML())
+@app.post("/parseXML")
+def _(file: File):
+    return (Parser.parseXML(file.filename))
 
-@app.get("/parseYAML")
-def _():
-    return (Parser.parseYAML())
+@app.post("/parseYAML")
+def _(file: File):
+    return (Parser.parseYAML(file.filename))

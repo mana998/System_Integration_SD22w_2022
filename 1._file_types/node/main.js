@@ -1,40 +1,26 @@
 import express from 'express';
-import {parseCSV, parseJSON, parseTXT, parseXML, parseYAML} from '../parser.js';
 
 const app = express();
+app.use(express.json());
 
-app.get("/parseCSV", async (req, res) => {
-    const csv = await parseCSV();
-    const csvParsed = [];
-    for (let i = 1; i < csv.length; i++) {
-        const object = {};
-        for (let j = 0; j < csv[0].length; j++) {
-            object[csv[0][j]] = csv[i][j];
-        }
-        csvParsed.push(object);
-    }
-    res.send({"csv": csvParsed});
-})
+import swaggerJsdoc from 'swagger-jsdoc';
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Users API',
+      version: '0.0.1',
+    },
+  },
+  apis: ['./routers/*.js'],
+};
+const openapiSpecification = swaggerJsdoc(options);
 
-app.get("/parseJSON", async (req, res) => {
-    const json = await parseJSON();
-    res.send({"json": json});
-})
+import swaggerUI from "swagger-ui-express";
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(openapiSpecification));
 
-app.get("/parseXML", (req, res) => {
-    const xml = parseXML();
-    res.send({"xml": xml});
-})
-
-app.get("/parseYAML", async (req, res) => {
-    const yaml = await parseYAML();
-    res.send({"yaml": yaml});
-})
-
-app.get("/parseTXT", (req, res) => {
-    const txt = parseTXT();
-    res.send({"txt": txt});
-})
+import parseRouter from "./routers/parseRouter.js";
+app.use(parseRouter);
 
 app.listen(3000, (error) => {
     console.log("Server is running on", 3000);
